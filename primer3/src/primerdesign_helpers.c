@@ -318,15 +318,22 @@ pdh_setGlobals(p3_global_settings* pa, PyObject* p3s_dict) {
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_OPT_GC_PERCENT", pa->p_args.opt_gc_content);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_MIN_TM", pa->p_args.min_tm);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_MAX_TM", pa->p_args.max_tm);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_MIN_BOUND", pa->p_args.min_bound);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_MAX_BOUND", pa->p_args.max_bound);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_OPT_BOUND", pa->p_args.opt_bound);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_PAIR_MAX_DIFF_TM", pa->max_diff_tm);
     DICT_GET_AND_ASSIGN_INT_TYPE(p_obj, p3s_dict, "PRIMER_TM_FORMULA", pa->tm_santalucia, tm_method_type);
     DICT_GET_AND_ASSIGN_INT_TYPE(p_obj, p3s_dict, "PRIMER_SALT_CORRECTIONS", pa->salt_corrections, salt_correction_type);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_MIN_GC", pa->p_args.min_gc);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_ANNEALING_TEMP", pa->annealing_temp);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_MAX_GC", pa->p_args.max_gc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_SALT_MONOVALENT", pa->p_args.salt_conc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_SALT_DIVALENT", pa->p_args.divalent_conc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_DNTP_CONC", pa->p_args.dntp_conc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_DNA_CONC", pa->p_args.dna_conc);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_DMSO_CONC", pa->p_args.dmso_conc);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_DMSO_FACTOR", pa->p_args.dmso_fact);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_FORMAMIDE_CONC", pa->p_args.formamide_conc);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_MAX_NS_ACCEPTED", pa->p_args.num_ns_accepted);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_PRODUCT_OPT_SIZE", pa->product_opt_size);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_MAX_SELF_ANY", pa->p_args.max_self_any);
@@ -359,8 +366,11 @@ pdh_setGlobals(p3_global_settings* pa, PyObject* p3s_dict) {
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_SEQUENCING_SPACING", pa->sequencing.spacing);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_SEQUENCING_INTERVAL", pa->sequencing.interval);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_SEQUENCING_ACCURACY", pa->sequencing.accuracy);
-    DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", pa->min_5_prime_overlap_of_junction);
-    DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", pa->min_3_prime_overlap_of_junction);
+    DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_MIN_5_PRIME_OVERLAP_OF_JUNCTION", pa->p_args.min_5_prime_overlap_of_junction);
+    DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_MIN_3_PRIME_OVERLAP_OF_JUNCTION", pa->p_args.min_3_prime_overlap_of_junction);
+    DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION", pa->o_args.min_5_prime_overlap_of_junction);
+    DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION", pa->o_args.min_3_prime_overlap_of_junction);
+
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_PICK_RIGHT_PRIMER", pa->pick_right_primer);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_PICK_INTERNAL_OLIGO", pa->pick_internal_oligo);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_PICK_LEFT_PRIMER", pa->pick_left_primer);
@@ -372,12 +382,17 @@ pdh_setGlobals(p3_global_settings* pa, PyObject* p3s_dict) {
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_OPT_GC_PERCENT", pa->o_args.opt_gc_content);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_MAX_TM", pa->o_args.max_tm);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_MIN_TM", pa->o_args.min_tm);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_MAX_BOUND", pa->o_args.max_bound);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_MIN_BOUND", pa->o_args.min_bound);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_MIN_GC", pa->o_args.min_gc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_MAX_GC", pa->o_args.max_gc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_SALT_MONOVALENT", pa->o_args.salt_conc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_SALT_DIVALENT", pa->o_args.divalent_conc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_DNTP_CONC", pa->o_args.dntp_conc);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_DNA_CONC", pa->o_args.dna_conc);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_DMSO_CONC", pa->o_args.dmso_conc);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_DMSO_FACTOR", pa->o_args.dmso_fact);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_FORMAMIDE_CONC", pa->o_args.formamide_conc);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_INTERNAL_MAX_NS_ACCEPTED", pa->o_args.num_ns_accepted);
     DICT_GET_AND_ASSIGN_INT(p_obj, p3s_dict, "PRIMER_INTERNAL_MIN_QUALITY", pa->o_args.min_quality);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_MAX_SELF_ANY", pa->o_args.max_self_any);
@@ -415,6 +430,9 @@ pdh_setGlobals(p3_global_settings* pa, PyObject* p3s_dict) {
 
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_TM_GT", pa->p_args.weights.temp_gt);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_TM_LT", pa->p_args.weights.temp_lt);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_BOUND_GT", pa->p_args.weights.bound_gt);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_BOUND_LT", pa->p_args.weights.bound_lt);
+
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_GC_PERCENT_GT", pa->p_args.weights.gc_content_gt);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_GC_PERCENT_LT", pa->p_args.weights.gc_content_gt);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_SIZE_LT", pa->p_args.weights.length_lt);
@@ -434,6 +452,8 @@ pdh_setGlobals(p3_global_settings* pa, PyObject* p3s_dict) {
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_WT_TEMPLATE_MISPRIMING_TH", pa->p_args.weights.template_mispriming_th);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_WT_TM_GT", pa->o_args.weights.temp_gt);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_WT_TM_LT", pa->o_args.weights.temp_lt);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_WT_BOUND_GT", pa->o_args.weights.bound_gt);
+    DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_WT_BOUND_LT", pa->o_args.weights.bound_lt);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_WT_GC_PERCENT_GT", pa->o_args.weights.gc_content_gt);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_WT_GC_PERCENT_LT", pa->o_args.weights.gc_content_lt);
     DICT_GET_AND_ASSIGN_DOUBLE(p_obj, p3s_dict, "PRIMER_INTERNAL_WT_SIZE_LT", pa->o_args.weights.length_lt);
@@ -752,6 +772,10 @@ pdh_setSeqArgs(PyObject* sa_dict, seq_args* sa) {
     DICT_GET_AND_COPY_STR(p_obj, sa_dict, "SEQUENCE_PRIMER", &sa->left_input, temp_char, str_size);
     DICT_GET_AND_COPY_STR(p_obj, sa_dict, "SEQUENCE_PRIMER_REVCOMP", &sa->right_input, temp_char, str_size);
     DICT_GET_AND_COPY_STR(p_obj, sa_dict, "SEQUENCE_INTERNAL_OLIGO", &sa->internal_input, temp_char, str_size);
+    DICT_GET_AND_COPY_STR(p_obj, sa_dict, "SEQUENCE_OVERHANG_LEFT", &sa->overhang_left, temp_char, str_size);
+    DICT_GET_AND_COPY_STR(p_obj, sa_dict, "SEQUENCE_OVERHANG_RIGHT", &sa->overhang_right, temp_char, str_size);
+
+
     DICT_GET_AND_COPY_ARRAY(p_obj, sa_dict, "SEQUENCE_QUALITY", &sa->quality, &sa->n_quality);
     if (DICT_GET_OBJ(p_obj, sa_dict, "SEQUENCE_PRIMER_PAIR_OK_REGION_LIST")) {
         int ii[4], flat_list = 0;
@@ -862,6 +886,7 @@ pdh_setSeqArgs(PyObject* sa_dict, seq_args* sa) {
             }
         }
     }
+
     if DICT_GET_OBJ(p_obj, sa_dict, "SEQUENCE_INCLUDED_REGION") {
         PyObject* seq_item1, * seq_item2;
         if (!PySequence_Check(p_obj)) {
@@ -1113,13 +1138,13 @@ pdh_outputToDict(const p3_global_settings* pa, const seq_args* sa,
         PyErr_SetString(PyExc_IOError, "Primer3 ran out of memory.");
         return NULL;
     }
-
     if (pr_append_new_chunk_external(combined_retval_err,
         retval->per_sequence_err.data)) {
         PyErr_SetString(PyExc_IOError, "Primer3 ran out of memory.");
         return NULL;
     }
 
+    SET_DICT_KEY_TO_STR(output_dict, "TEST", "TEST!", obj_ptr);
 
     /* Check if there are errors, print and return */
     if (!pr_is_empty(combined_retval_err)) {
@@ -1311,12 +1336,12 @@ pdh_outputToDict(const p3_global_settings* pa, const seq_args* sa,
         if (go_fwd == 1) {
             sprintf(outbuff, "PRIMER_LEFT%s_SEQUENCE", suffix);
             SET_DICT_KEY_TO_STR(output_dict, outbuff, \
-                pr_oligo_sequence(sa, fwd), obj_ptr);
+                pr_oligo_overhang_sequence(sa, fwd), obj_ptr);
         }
         if (go_rev == 1) {
             sprintf(outbuff, "PRIMER_RIGHT%s_SEQUENCE", suffix);
             SET_DICT_KEY_TO_STR(output_dict, outbuff, \
-                pr_oligo_rev_c_sequence(sa, rev), obj_ptr);
+                pr_oligo_rev_c_overhang_sequence(sa, rev), obj_ptr);
         }
         if (go_int == 1) {
             sprintf(outbuff, "PRIMER_%s%s_SEQUENCE", int_oligo, suffix);
@@ -1353,6 +1378,23 @@ pdh_outputToDict(const p3_global_settings* pa, const seq_args* sa,
         if (go_int == 1) {
             sprintf(outbuff, "PRIMER_%s%s_TM", int_oligo, suffix);
             SET_DICT_KEY_TO_DOUBLE(output_dict, outbuff, intl->temp, obj_ptr);
+        }
+
+        /* Print fraction bound at melting temperature */
+        if ((pa->annealing_temp > 0.0) && (pa->salt_corrections != 2)) {
+          if ((go_fwd == 1) && (fwd->bound > 0.0))
+          {
+            sprintf(outbuff, "PRIMER_LEFT%s_BOUND", suffix);
+            SET_DICT_KEY_TO_DOUBLE(output_dict, outbuff, fwd->bound, obj_ptr);
+          }
+          if ((go_rev == 1) && (rev->bound > 0.0))
+          {
+            sprintf(outbuff, "PRIMER_RIGHT%s_BOUND", suffix);
+            SET_DICT_KEY_TO_DOUBLE(output_dict, outbuff, rev->bound, obj_ptr);
+          }
+          if ((go_int == 1) && (intl->bound > 0.0))
+            sprintf(outbuff, "PRIMER_%s%s_BOUND", int_oligo, suffix);
+            SET_DICT_KEY_TO_DOUBLE(output_dict, outbuff, intl->bound, obj_ptr);
         }
 
         /* Print primer GC content */
@@ -1567,9 +1609,15 @@ pdh_outputToDict(const p3_global_settings* pa, const seq_args* sa,
                     retval->best_pairs.pairs[i].compl_end, obj_ptr);
             }
             /* Print product size */
-            sprintf(outbuff, "PRIMER_PAIR%s_PRODUCT_SIZE", suffix);
-            SET_DICT_KEY_TO_LONG(output_dict, outbuff, \
-                retval->best_pairs.pairs[i].product_size, obj_ptr);
+           int product_size = retval->best_pairs.pairs[i].product_size;
+           if (NULL != sa->overhang_left) {
+            product_size += strlen(sa->overhang_left);
+           }
+           if (NULL != sa->overhang_right) {
+             product_size += strlen(sa->overhang_right);
+           }
+           sprintf(outbuff, "PRIMER_PAIR%s_PRODUCT_SIZE", suffix);
+           SET_DICT_KEY_TO_LONG(output_dict, outbuff, product_size, obj_ptr);
             /* Print the product Tm if a Tm range is defined */
             if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
                 pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
@@ -1584,6 +1632,11 @@ pdh_outputToDict(const p3_global_settings* pa, const seq_args* sa,
                 sprintf(outbuff, "PRIMER_PAIR%s_T_OPT_A=", suffix);
                 SET_DICT_KEY_TO_DOUBLE(output_dict, outbuff, \
                     retval->best_pairs.pairs[i].t_opt_a, obj_ptr);
+            }
+            else {
+                sprintf(outbuff, "PRIMER_PAIR%s_PRODUCT_TM\n", suffix);
+                SET_DICT_KEY_TO_DOUBLE(output_dict, outbuff, \
+                    retval->best_pairs.pairs[i].product_tm, obj_ptr)
             }
 
             /* Print the primer pair template mispriming */

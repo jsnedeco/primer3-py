@@ -286,9 +286,9 @@ def designPrimers(p3_args, input_log=None, output_log=None, err_log=None):
         input_log.flush()
     out_str, err_str = sp.communicate(input=in_str)
     if output_log:
-        output_log.write(out_str)
+        output_log.write(out_str.decode('utf-8'))
         output_log.flush()
     if err_log and err_str is not None:
-        err_log.write(err_str)
+        err_log.write(err_str.decode('utf-8'))
         err_log.flush()
     return _parseBoulderIO(out_str)

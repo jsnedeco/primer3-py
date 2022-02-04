@@ -1,3 +1,74 @@
+release 2.6.0 2022-01-08  ===============================================
+This release adds new features to primer3_core and related C code.
+
+The actual annealing temperature of the PCR reaction may be specified by
+PRIMER_ANNEALING_TEMP. The Primer3 calculates the fraction of primer
+bound and provides PRIMER_[LEFT/INTERNAL/RIGHT]_4_BOUND as percent
+value in the output. Primers may also be selected on a given fraction
+range please see "GENERAL THOUGHTS ON PRIMER BINDING" in
+primer3_manual.htm for details.
+
+SEQUENCE_OVERHANG_LEFT and SEQUENCE_OVERHANG_RIGHT may specify a sequence
+which is added to the 5' end of the respective primer. The overhang
+sequences are utilized in calculating SELF_ANY, SELF_END, HAIRPIN,
+COMPL_ANY, COMPL_END, plus the _TH and _STRUCT versions of those outputs,
+as well as PRODUCT_SIZE. Internal oligos may not have an overhang. The
+length of SEQUENCE_OVERHANG_LEFT and SEQUENCE_OVERHANG_RIGHT do not add
+to the binding product size of PRIMER_PRODUCT_SIZE_RANGE or
+PRIMER_PRODUCT_OPT_SIZE. The TM and GC_PERCENT calculations will only be
+based on the 3' portion of the oligo that binds to the template.
+
+The selection of internal/middle oligos/probes was enhanced for exact
+positioning in the light of SNP analysis. The SEQUENCE_EXCLUDED_REGION
+(were no left/right primers may bind, bud middle probes) and
+SEQUENCE_INTERNAL_EXCLUDED_REGION (were no middle probes may bind, bud
+left/right primers) was left unmodified. In addition a
+SEQUENCE_INTERNAL_OVERLAP_JUNCTION_LIST of positions a middle probes has
+to overlap may be provided. A distance to the ends of the middle probe
+is set by PRIMER_INTERNAL_MIN_5_PRIME_OVERLAP_OF_JUNCTION and
+PRIMER_INTERNAL_MIN_3_PRIME_OVERLAP_OF_JUNCTION. The number of returned
+middle probes at one location may be limited by
+PRIMER_INTERNAL_MIN_THREE_PRIME_DISTANCE. See the test
+primer_internal_position_input for example use.
+
+Primer3 includes corrections for DMSO using PRIMER_DMSO_CONC and
+formamide using PRIMER_FORMAMIDE_CONC. Only he calculated Tm of primers,
+oligos and the product Tm will be corrected.
+
+Amplicon3 was included as a new tool in the Primer3 package and
+calculates melting curves of PCR products. Amplicon3 is based on
+MeltPolymer.c from the DECIPHER package created by Erik Wright and is
+licensed under GPL-3. Currently it only supports SantaLucia thermodynamic
+parameters and salt correction. Please consider Amplicon3 experimental.
+
+Minor fixes:
+1. Handling of N in PRIMER_MAX_POLY_X was fixed. Now 'GGGNNN' violates
+   MAX_POLY_X=5. It is now based on the worst possible case (all 3 Ns
+   could be Gs).
+
+2. ntthal allows multiple queries using the -i command line option.
+   ntthal runs in an interactive mode, each line is an oligo, where pairs
+   of consecutive lines are pairs of oligos to test (only for dimers).
+
+3. GitHub default branch was renamed to main. Please run these commands
+   on old repos:
+     git branch -m master main
+     git fetch origin
+     git branch -u origin/main main
+     git remote set-head origin -a
+
+4. Provided left and right primer may be not identical or the reverse
+   complement of each other.
+
+5. More informative primer statistics with
+   PRIMER_TASK=pick_sequencing_primers.
+
+6. PRIMER_PAIR_4_PRODUCT_TM is now always provided.
+
+7. SEQUENCE_START_CODON_SEQUENCE allows to specify an alternative start
+   codon to be used with SEQUENCE_START_CODON_POSITION.
+
+
 release 2.5.0 2019-08-17  ===============================================
 This release adds new features to primer3_core and related C code.
 

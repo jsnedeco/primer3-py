@@ -194,6 +194,9 @@ class TestDesignBindings(unittest.TestCase):
             'long_seq',
             'p3-tmpl-mispriming'
         ]
+        test_file_roots = [
+            'test_left_to_right_of_right',
+        ]
         print()
         failures = []
         for fn_root in test_file_roots:
@@ -211,12 +214,14 @@ class TestDesignBindings(unittest.TestCase):
                 test_id = str(seq_args.get('SEQUENCE_ID', ''))
                 current_global_args.update(global_args)
                 simulated_binding_res = simulatedbindings.designPrimers(
-                                            seq_args, current_global_args)
+                                                seq_args, current_global_args)
+
                 wrapper_error = simulated_binding_res.get('PRIMER_ERROR')
                 if wrapper_error is not None:
                     with self.assertRaises(IOError):
                         binding_res = bindings.designPrimers(seq_args,
                                                             current_global_args)
+                        sys.stdout.write(str(binding_res))
                 else:
                     try:
                         binding_res = bindings.designPrimers(seq_args,

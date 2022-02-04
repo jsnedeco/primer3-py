@@ -58,14 +58,18 @@ cdef extern from "oligotm.h":
         santalucia     = 1
         owczarzy       = 2
 
-    double seqtm(const char*,
-                     double,
-                     double,
-                     double,
-                     double,
-                     int,
+    cdef tm_ret seqtm(const char*, #Sequence
+                     double, # DNA concentration (nanomolar).
+                     double, # Concentration of divalent cations (millimolar).
+                     double, # Concentration of divalent cations (millimolar)
+                     double, # Concentration of dNTPs (millimolar)
+                     double, # Concentration of DMSO (%)
+                     double, # DMSO correction factor, default 0.6
+                     double, # Concentration of formamide (mol/l)
+                     int, # Maximum sequence length for nearest neighbor model
                      tm_method_type,
                      salt_correction_type,
+                     double, # Actual annealing temperature of the PCR reaction
                      )
 
 
@@ -237,7 +241,11 @@ cdef class ThermoAnalysis:
                   thal_type=1,
                   mv_conc=50,
                   dv_conc=1.5,
-                  dntp_conc=0.2,
+                  dntp_conc=0.6,
+                  dmso_conc=0.0,
+                  dmso_fact=0.6,
+                  formamide_conc=0.0,
+                  annealing_temp=-10.0,
                   dna_conc=200,
                   temp_c=37,
                   max_loop=30,
@@ -252,6 +260,10 @@ cdef class ThermoAnalysis:
         self.thalargs.dv = dv_conc;
         self.thalargs.dntp = dntp_conc;
         self.thalargs.dna_conc = dna_conc;
+        self.dmso_conc = dmso_conc;
+        self.dmso_fact = dmso_fact;
+        self.formamide_conc = formamide_conc;
+        self.annealing_temp = annealing_temp;
         self.thalargs.temp = temp_c + 273.15;
         self.thalargs.maxLoop = max_loop;
         self.thalargs.temponly = temp_only;
@@ -289,6 +301,34 @@ cdef class ThermoAnalysis:
             return self.thalargs.dntp
         def __set__(self, value):
             self.thalargs.dntp = value
+
+    property dmso_conc:
+        ''' Concentration of DMSO (%) '''
+        def __get__(self):
+            return self.dmso_conc
+        def __set__(self, value):
+            self.dmso_conc = value
+
+    property dmso_fact:
+        ''' DMSO correction factor, default 0.6 '''
+        def __get__(self):
+            return self.dmso_fact
+        def __set__(self, value):
+            self.dmso_fact = value
+
+    property annealing_temp:
+        ''' Concentration of formamide (mol/l) '''
+        def __get__(self):
+            return self.annealing_temp
+        def __set__(self, value):
+            self.annealing_temp = value
+
+    property formamide_conc:
+        ''' Concentration of formamide (mol/l) '''
+        def __get__(self):
+            return self.formamide_conc
+        def __set__(self, value):
+            self.formamide_conc = value
 
     property dna_conc:
         ''' Concentration of DNA oligos (nM) '''
@@ -547,15 +587,21 @@ cdef class ThermoAnalysis:
 
     cdef inline double calcTm_c(ThermoAnalysis self, char *s1):
         cdef thal_args *ta = &self.thalargs
-        return seqtm(<const char*> s1,
+        cdef tm_ret tmres
+        tmres = seqtm(<const char*> s1,
                      ta.dna_conc,
                      ta.mv,
                      ta.dv,
                      ta.dntp,
+                     self.dmso_conc,
+                     self.dmso_fact,
+                     self.formamide_conc,
+
                      self.max_nn_length,
                      <tm_method_type>
                      self.tm_method,
-                     <salt_correction_type> self.salt_correction_method)
+                     <salt_correction_type> self.salt_correction_method, self.annealing_temp)
+        return tmres.Tm
 
     def calcTm(ThermoAnalysis self, seq1):
         ''' Calculate the melting temperature (Tm) of a DNA sequence (deg. C).
@@ -576,6 +622,10 @@ cdef class ThermoAnalysis:
             'dv_conc':      self.dv_conc,
             'dntp_conc':    self.dntp_conc,
             'dna_conc':     self.dna_conc,
+            'dmso_conc':    self.dmso_conc,
+            'dmso_fact':    self.dmso_fact,
+            'formamide_conc': self.formamide_conc,
+            'annealing_temp': self.annealing_temp,
             'temp_c':       self.temp,
             'max_loop':     self.max_loop,
             'temp_only':    self.temp_only,

@@ -351,7 +351,7 @@ _dpal_generic(const unsigned char *X,
               const int xlen, 
               const int ylen,
               const dpal_args *in,
-	      const dpal_mode mode,
+              const dpal_mode mode,
               dpal_results *out)
 {
 
@@ -607,12 +607,12 @@ _dpal_long_nopath_generic(const unsigned char *X,
     out->path_length = 0;
     out->msg = NULL;
 
-    P = (int **) malloc(sizeof(int*)*(max_gap+2));
+    P = (int **) malloc(sizeof(*S)*(max_gap+2));
     if (!P) { DPAL_OOM_ERROR; }
-    S = (int **) malloc(sizeof(int*)*(max_gap+2));
+    S = (int **) malloc(sizeof(*S)*(max_gap+2));
     if (!S) { DPAL_OOM_ERROR; }
     for(i=0; i<max_gap+2; i++){
-      P[i] = (int *) malloc(sizeof(int)*xlen);
+      P[i] = (int *) malloc(sizeof(SI)*xlen);
       if (!P[i]) { DPAL_OOM_ERROR; }
       S[i] = P[i];
     }
@@ -951,7 +951,7 @@ print_align(const unsigned char *X,
             int I,
             int J,
             const dpal_args *dargs,
-	    const dpal_mode mode,
+            const dpal_mode mode,
             dpal_results *out)
 {
   int JX[DPAL_MAX_ALIGN],JY[DPAL_MAX_ALIGN];
@@ -1080,9 +1080,9 @@ print_align(const unsigned char *X,
           ret_str[ret_nr - 2] = '\'';
           ret_pr_once = 1;
         }
-	if (sy[i] == 'A') {
+        if (sy[i] == 'A') {
           ret_str[ret_nr++] = 'T';
-	} else if (sy[i] == 'T') {
+        } else if (sy[i] == 'T') {
           ret_str[ret_nr++] = 'A';
         } else if (sy[i] == 'C') {
           ret_str[ret_nr++] = 'G';
@@ -1090,7 +1090,7 @@ print_align(const unsigned char *X,
           ret_str[ret_nr++] = 'C';
         } else {
           ret_str[ret_nr++] = sy[i];
-	}
+        }
       }
       while (ret_nr > 0 && ret_str[ret_nr - 1] == ' ') {
         ret_nr--;

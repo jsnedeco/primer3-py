@@ -509,10 +509,9 @@ thal(const unsigned char *oligo_f,
    CHECK_ERROR(1==len_r, "Length 1 second sequence"); */
    /* The following error messages will be seen by end users and will
       not be easy to understand. */
-
    CHECK_ERROR((len_f > THAL_MAX_ALIGN) && (len_r > THAL_MAX_ALIGN),
-               "At least one sequence must be equal to or shorter than " 
-               XSTR(THAL_MAX_ALIGN) "bp for thermodynamic calculations");
+               "Both sequences longer than " XSTR(THAL_MAX_ALIGN)
+               " for thermodynamic alignment");
    CHECK_ERROR((len_f > THAL_MAX_SEQ), 
                LONG_SEQ_ERR_STR(THAL_MAX_SEQ) " (1)");
    CHECK_ERROR((len_r > THAL_MAX_SEQ), 
@@ -669,7 +668,7 @@ thal(const unsigned char *oligo_f,
               }
            }
         }
-	  int *ps1, *ps2;			 
+      int *ps1, *ps2;
       ps1 = (int*) safe_calloc(len1, sizeof(int), o);
       ps2 = (int*) safe_calloc(len2, sizeof(int), o);
       for (i = 0; i < len1; ++i)
@@ -695,7 +694,7 @@ thal(const unsigned char *oligo_f,
          }
       }
       if (!isFinite(bestG)) bestI = bestJ = 1;
-	  double dH, dS;				
+      double dH, dS;
       RSH(bestI, bestJ, SH);
       dH = EnthalpyDPT(bestI, bestJ)+ SH[1] + dplx_init_H;
       dS = (EntropyDPT(bestI, bestJ) + SH[0] + dplx_init_S);
@@ -712,7 +711,6 @@ thal(const unsigned char *oligo_f,
       } else  {
          o->temp = 0.0;
          /* fputs("No secondary structure could be calculated\n",stderr); */
-         o->no_structure = 1;
       }
       free(ps1);
       free(ps2);
@@ -907,12 +905,12 @@ readParamFile(const char* dirname, const char* fname, thal_results* o)
     if (remaining_size <= 0) {
       if (ssz >= INT_MAX / 2) {
         strcpy(o->msg, "Out of memory");
-	free(ret);
-	longjmp(_jmp_buf, 1);
-	return NULL;
+        free(ret);
+        longjmp(_jmp_buf, 1);
+        return NULL;
       } else {
         ssz += INIT_BUF_SIZE;
-	remaining_size += INIT_BUF_SIZE;
+        remaining_size += INIT_BUF_SIZE;
       }
       ret = (char *) safe_realloc(ret, ssz, o);
     }
@@ -926,7 +924,7 @@ thal_load_parameters(const char *path, thal_parameters *a, thal_results* o)
 {
   thal_free_parameters(a);
   if (setjmp(_jmp_buf) != 0) {
-	 printf("longjump\n");
+    printf("longjump\n");
     return -1;
   }
   a->dangle_dh = readParamFile(path, "dangle.dh", o);
@@ -989,7 +987,7 @@ th_read_str_line(char **str, thal_results* o)
       if (ptr == ini) {
         if (ret != NULL) {
           free(ret);
-	}
+        }
         return NULL;
       } else {  
         return ret;
@@ -1056,7 +1054,7 @@ readLoop(char **str, double *v1, double *v2, double *v3, thal_results *o)
 /* Reads a line containing a short string and a double, used for reading a triloop or tetraloop. */
 static int
 readTLoop(char **str, char *s, double *v, int triloop, thal_results *o)
-{ 
+{
   char *line = th_read_str_line(str, o);
   if (!line) return -1;
   char *p = line, *q;
@@ -2226,7 +2224,7 @@ calc_bulge_internal2(int i, int j, int ii, int jj, double* EntropyEnthalpy, int 
             H += EnthalpyDPT(ii, jj); /* bulge koos otsaga, st bulge i,j-ni */
             S += EntropyDPT(ii, jj);
          }
-		
+
          if(!isFinite(H)) {
             H = _INFINITY;
             S = -1.0;
@@ -2320,8 +2318,6 @@ static void
 calc_terminal_bp(double temp) { /* compute exterior loop */
    int i;
    int max;
-   double T1, T2, T3, T4, T5;
-   double G;
    SEND5(0) = SEND5(1) = -1.0;
    HEND5(0) = HEND5(1) = _INFINITY;
    for(i = 2; i<=(len1); i++) {
@@ -2329,7 +2325,9 @@ calc_terminal_bp(double temp) { /* compute exterior loop */
       HEND5(i) = 0;
    }
 
+   double T1, T2, T3, T4, T5;
    T1 = T2 = T3 = T4 = T5 = -_INFINITY;
+   double G;
    /* adding terminal penalties to 3' end and to 5' end */
    for(i = 2; i <= len1; ++i) {
       max = 0;
@@ -3000,8 +2998,8 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode m
            ret_str[0][ret_nr] == 'C' || ret_str[0][ret_nr] == 'G' ||
            ret_str[0][ret_nr] == '-') {
          ret_str[0][ret_nr - 3] = '5';
-	 ret_str[0][ret_nr - 2] = '\'';
-	 ret_pr_once = 0;
+         ret_str[0][ret_nr - 2] = '\'';
+         ret_pr_once = 0;
        }
        ret_nr++;
      }
@@ -3011,7 +3009,7 @@ drawDimer(int* ps1, int* ps2, double temp, double H, double S, const thal_mode m
      for (i = 0 ; i < (int) strlen(duplex[1]) ; i++) {
        if (duplex[1][i] == 'A' || duplex[1][i] == 'T' || 
            duplex[1][i] == 'C' || duplex[1][i] == 'G' ) {
-	 ret_str[1][i + 3] = '|';
+         ret_str[1][i + 3] = '|';
        } else {
          ret_str[1][i + 3] = ' ';
        }
@@ -3226,7 +3224,7 @@ drawHairpin(int* bp, double mh, double ms, const thal_mode mode, double temp, th
        save_append_char(&ret_str, &ret_space, o, ' ');
      }
      for (i = 0 ; i < ret_left_len ; i++) {
-       if (asciiRow[i] == '/') {	     
+       if (asciiRow[i] == '/') {
          save_append_char(&ret_str, &ret_space, o, '|');
        } else {
          save_append_char(&ret_str, &ret_space, o, ' ');

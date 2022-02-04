@@ -378,8 +378,8 @@ print_seq(FILE *f,
       p = best_pairs->pairs + num;
     }
     len = strlen(sa->sequence);
-    if (!(notes = (int*) malloc(sizeof(int) * len))) return 1;
-    memset(notes, 0, sizeof(int) * len);
+    if (!(notes = (int*) malloc(sizeof(*notes) * len))) return 1;
+    memset(notes, 0, sizeof(*notes) * len);
     if (!(notestr = (char*) malloc(len + 1))) { free(notes); return 1; }
     memset(notestr, ' ', len);
     notestr[len] = '\0';
@@ -415,8 +415,8 @@ print_seq(FILE *f,
                  i < h->start + h->length + sa->incl_s)
                notes[i] |= INTL_OLIGO;
         } else if (pa->primer_task == pick_sequencing_primers) {
-    	    if (pa->pick_right_primer && (retval->rev.oligo != NULL)
-    	             && (retval->rev.num_elem > 0) ){
+                if (pa->pick_right_primer && (&retval->rev) != NULL
+                         && retval->rev.num_elem > 0){
                   h2 = retval->rev.oligo;
               for (j = 0; j < pa->num_return; j++) {
                     if(j > retval->rev.num_elem -1) break;
@@ -426,9 +426,9 @@ print_seq(FILE *f,
                    notes[i] |= RIGHT_OLIGO;
                   }
             }           
-    	    if (pa->pick_left_primer && (retval->fwd.oligo != NULL)
-    	             && (retval->fwd.num_elem > 0) ) {
-    	      h2 = retval->fwd.oligo;
+                if (pa->pick_left_primer && (&retval->fwd) != NULL
+                         && retval->fwd.num_elem > 0){
+                  h2 = retval->fwd.oligo;
               for (j = 0; j < pa->num_return; j++) {
                     if(j > retval->fwd.num_elem -1) break;
                     h3 = h2 + j;
@@ -541,11 +541,11 @@ print_seq_lines(FILE *f, const char *s, const char *n, int seq_size,
     int i = 0;
     while (seq_size > line_size) {
         fprintf(f, "%5d ", i + pa->first_base_index);
-        fwrite(s, sizeof(char), line_size, f);
+        fwrite(s, sizeof(*s), line_size, f);
         fputc('\n', f);
         if (something_found) {
             fprintf(f, "      ");
-            fwrite(n, sizeof(char), line_size, f);
+            fwrite(n, sizeof(*n), line_size, f);
             fprintf(f, "\n\n");
         }
         seq_size -= line_size;
@@ -848,22 +848,22 @@ format_oligos(FILE *f,
       print_oligo_header(f, "OLIGO", print_lib_sim, pa->thermodynamic_oligo_alignment);
     }
     /* Print out the first line with the best primers */
-    if ((pa->pick_left_primer) && (retval->fwd.oligo != NULL )
-               && (retval->fwd.num_elem > 0) ) {
+    if ((pa->pick_left_primer) && ((&retval->fwd) != NULL )
+               && (retval->fwd.num_elem > 0)){
       print_oligo(f, "LEFT_PRIMER", sa, retval->fwd.oligo, FORWARD, 
                   pa, pa->p_args.repeat_lib, print_lib_sim);
       h = retval->fwd.oligo;
       rest_count = 1;
     }
-    if ((pa->pick_internal_oligo) && (retval->intl.oligo != NULL)
-             && (retval->intl.num_elem > 0) ) {
+    if ((pa->pick_internal_oligo) && ((&retval->intl) != NULL )
+             && (retval->intl.num_elem > 0)){
       print_oligo(f, "INTERNAL_OLIGO", sa, retval->intl.oligo, FORWARD, 
                   pa, pa->p_args.repeat_lib, print_lib_sim);
       h = retval->intl.oligo;
       rest_count = 1;
     }
-    if ((pa->pick_right_primer) && (retval->rev.oligo != NULL)
-             && (retval->rev.num_elem > 0) ) {
+    if ((pa->pick_right_primer) && ((&retval->rev) != NULL )
+             && (retval->rev.num_elem > 0)) {
       print_oligo(f, "RIGHT_PRIMER", sa, retval->rev.oligo, REVERSE, 
                   pa, pa->p_args.repeat_lib, print_lib_sim);
           h = retval->rev.oligo;
@@ -885,8 +885,8 @@ format_oligos(FILE *f,
   }
   fprintf(f, "\n");
   /* Print out the other primers */
-  if ((pa->pick_left_primer) && (retval->fwd.oligo != NULL)
-             && (retval->fwd.num_elem > rest_count) ) {
+  if ((pa->pick_left_primer) && ((&retval->fwd) != NULL )
+             && (retval->fwd.num_elem > rest_count)){
     int n = retval->fwd.num_elem;
     h = retval->fwd.oligo;
     if (rest_count == 1) {  
@@ -904,8 +904,8 @@ format_oligos(FILE *f,
       fprintf(f, "\n ");
     }
   }
-  if ((pa->pick_internal_oligo) && (retval->intl.oligo != NULL )
-           && (retval->intl.num_elem > rest_count) ) {
+  if ((pa->pick_internal_oligo) && ((&retval->intl) != NULL )
+           && (retval->intl.num_elem > rest_count)){
     int n = retval->intl.num_elem;
     h = retval->intl.oligo;  
     if (rest_count == 1) {  
@@ -923,8 +923,8 @@ format_oligos(FILE *f,
       fprintf(f, "\n ");
     }
   }
-  if ((pa->pick_right_primer) && (retval->rev.oligo != NULL)
-           && (retval->rev.num_elem > rest_count) ) {
+  if ((pa->pick_right_primer) && ((&retval->rev) != NULL )
+           && (retval->rev.num_elem > rest_count)) {
     int n = retval->rev.num_elem;
     h = retval->rev.oligo; 
     if (rest_count == 1) {  

@@ -119,6 +119,8 @@ print_boulder(int io_version,
                                    retval->per_sequence_err.data)) 
     exit(-2);
 
+  print_boulder_error(pr_append_str_chars(combined_retval_err));
+
   /* Check if there are errors, print and return */
   if (!pr_is_empty(combined_retval_err)) {
     print_boulder_error(pr_append_str_chars(combined_retval_err));
@@ -260,10 +262,10 @@ print_boulder(int io_version,
     /* Print primer sequences. */
     if (go_fwd == 1)
       printf("PRIMER_LEFT%s_SEQUENCE=%s\n", suffix,
-             pr_oligo_sequence(sa, fwd));
+             pr_oligo_overhang_sequence(sa, fwd));
     if (go_rev == 1)
       printf("PRIMER_RIGHT%s_SEQUENCE=%s\n", suffix,
-             pr_oligo_rev_c_sequence(sa, rev));
+             pr_oligo_rev_c_overhang_sequence(sa, rev));
     if(go_int == 1)
       printf("PRIMER_%s%s_SEQUENCE=%s\n", int_oligo, suffix,
              pr_oligo_sequence(sa,intl));
@@ -289,6 +291,16 @@ print_boulder(int io_version,
       printf("PRIMER_RIGHT%s_TM=%.3f\n", suffix, rev->temp);
     if (go_int == 1)
       printf("PRIMER_%s%s_TM=%.3f\n", int_oligo, suffix, intl->temp);
+
+    /* Print fraction bound at melting temperature */
+    if ((pa->annealing_temp > 0.0) && (pa->salt_corrections != 2)) {
+      if ((go_fwd == 1) && (fwd->bound > 0.0))
+        printf("PRIMER_LEFT%s_BOUND=%.3f\n", suffix, fwd->bound);
+      if ((go_rev == 1) && (rev->bound > 0.0))
+        printf("PRIMER_RIGHT%s_BOUND=%.3f\n", suffix, rev->bound);
+      if ((go_int == 1) && (intl->bound > 0.0))
+        printf("PRIMER_%s%s_BOUND=%.3f\n", int_oligo, suffix, intl->bound);
+    }
 
     /* Print primer GC content */
     if (go_fwd == 1)
@@ -479,8 +491,15 @@ print_boulder(int io_version,
          printf("PRIMER_PAIR%s_COMPL_END_STUCT=%s\n", suffix, 
                 retval->best_pairs.pairs[i].compl_end_struct);
        /* Print product size */
+       int product_size = retval->best_pairs.pairs[i].product_size;
+       if (NULL != sa->overhang_left) {
+         product_size += strlen(sa->overhang_left);
+       }
+       if (NULL != sa->overhang_right) {
+         product_size += strlen(sa->overhang_right);
+       }
        printf("PRIMER_PAIR%s_PRODUCT_SIZE=%d\n", suffix,
-              retval->best_pairs.pairs[i].product_size);
+              product_size);
        /* Print the product Tm if a Tm range is defined */
        if (pa->product_max_tm != PR_DEFAULT_PRODUCT_MAX_TM ||
            pa->product_min_tm != PR_DEFAULT_PRODUCT_MIN_TM) {
@@ -492,6 +511,9 @@ print_boulder(int io_version,
          
          printf("PRIMER_PAIR%s_T_OPT_A=%.4f\n", suffix,
                 retval->best_pairs.pairs[i].t_opt_a);
+       } else {
+         printf("PRIMER_PAIR%s_PRODUCT_TM=%.1f\n", suffix,
+                retval->best_pairs.pairs[i].product_tm);
        }
       
       /* Print the primer pair template mispriming */

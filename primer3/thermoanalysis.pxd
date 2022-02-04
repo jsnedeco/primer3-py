@@ -23,6 +23,12 @@ C integration of the low-level thermodynamic analysis bindings.
 
 '''
 
+cdef extern from "oligotm.h":
+    ctypedef struct tm_ret:
+        double Tm
+        double bound
+
+
 cdef extern from "thal.h":
     ctypedef enum thal_alignment_type:
         thal_any = 1
@@ -38,6 +44,10 @@ cdef extern from "thal.h":
         double dv                 # [ ] of divalent cations (mM)
         double dntp               # [ ] of dNTPs (mM)
         double dna_conc           # [ ] of oligos (nM)
+        double dmso_conc          # [ ]
+        double dmso_fact          # [ ] correction factor
+        double annealing_temp     # [ ] of PCR reaction
+        double formamide_conc     # [ ] (mol/l)
         double temp               # temp at which hairpins will be calculated
         int temponly              # print only temp to stderr
         int dimer                 # if non-zero dimer structure is calculated
@@ -99,12 +109,16 @@ cdef extern from "thal.h":
 cdef class ThermoResult:
     cdef thal_results thalres
     cdef public object ascii_structure
-
+    
 cdef class ThermoAnalysis:
     cdef thal_args thalargs
     cdef public int max_nn_length
     cdef public int _tm_method
     cdef public int _salt_correction_method
+    cdef double dmso_conc
+    cdef double dmso_fact
+    cdef double annealing_temp
+    cdef double formamide_conc
 
     cdef inline ThermoResult calcHeterodimer_c(
         ThermoAnalysis self,
